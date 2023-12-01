@@ -145,8 +145,20 @@ function ready() {
     fftTransientLocation = gl.getUniformLocation(program, "u_fftTransient");
     fftHighMidLocation = gl.getUniformLocation(program, "u_fftHighMid");
 
-    // Initialize the Web Audio API
-    initWebAudio();
+    document.addEventListener("click", initAudioOnUserAction);
+
+    loadShaders(ready);
+    
+    function initAudioOnUserAction() {
+      // Remove the event listener after the first user action to avoid multiple initializations
+      document.removeEventListener("click", initAudioOnUserAction);
+    
+      // Initialize the Web Audio API
+      initWebAudio();
+    
+      // Start rendering after both shader and audio are ready
+      requestAnimationFrame(render);
+    }
 }
 
 function loadShaders(cb) {
