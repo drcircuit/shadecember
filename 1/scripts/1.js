@@ -5,6 +5,7 @@ gl.viewport(0, 0, canvas.width, canvas.height);
 let program, timeLocation, resolutionLocation, mouseLocation, fftTextureLocation;
 
 let click = false;
+let playing = false;
 let lastMousePos = { x: 0, y: 0 };
 let useResize = window.innerWidth === 1024 || window.innerHeight === 1024;
 const buffer = gl.createBuffer();
@@ -20,6 +21,8 @@ function setupCanvas() {
     parent.appendChild(c);
     window.addEventListener("resize", resize);
     document.addEventListener("mousemove", mousemove);
+    document.addEventListener("click", initAudioOnUserAction);
+    document.addEventListener("touchstart", initAudioOnUserAction);
     c.addEventListener("mousedown", (e) => { click = true; });
     c.addEventListener("mouseup", (e) => { click = false; });
     return c;
@@ -53,6 +56,20 @@ function mousemove(e) {
     }
     gl.uniform4f(mouseLocation, lastMousePos.x, lastMousePos.y, c, r);
 }
+
+let audioStarted = false;
+
+function initAudioOnUserAction() {
+  document.removeEventListener("click", initAudioOnUserAction);
+  document.removeEventListener("touchstart", initAudioOnUserAction);
+
+  if (!audioStarted) {
+    initWebAudio();
+    audioStarted = true;
+  }
+
+  requestAnimationFrame(render);
+}
 function initWebAudio() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     analyser = audioContext.createAnalyser();
@@ -61,20 +78,23 @@ function initWebAudio() {
 
     // Load and decode the .wav file
     loadAudioFile("./scember1.mp3", function (buffer) {
-        source.buffer = buffer;
-        source.loopEnd = 24.0;
-        source.loop = true;
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
+        if(!playing)
+        {
+            source.buffer = buffer;
+            source.loopEnd = 24.0;
+            source.loop = true;
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
 
+            source.start(0);
+            playing = true;
     
-        source.start(0);
+            // Update FFT uniforms in the render loop
+            updateFFTTexture();
 
-        // Update FFT uniforms in the render loop
-        updateFFTTexture();
-
-        // Start rendering after both shader and audio are ready
-        requestAnimationFrame(render);
+            // Start rendering after both shader and audio are ready
+            requestAnimationFrame(render);
+        }
     });
 }
 
@@ -145,7 +165,7 @@ function ready() {
     fftTransientLocation = gl.getUniformLocation(program, "u_fftTransient");
     fftHighMidLocation = gl.getUniformLocation(program, "u_fftHighMid");
 
-    document.addEventListener("click", initAudioOnUserAction);
+    
 
     loadShaders(ready);
     
