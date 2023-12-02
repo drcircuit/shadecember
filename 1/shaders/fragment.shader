@@ -1,5 +1,5 @@
 #ifdef GL_ES
-precision highp float;
+precision mediump float;
 #endif
 
 // Uniform variables for resolution, FFT texture, mouse position, and time
@@ -68,13 +68,13 @@ void main() {
       color.b += 0.001 / d * transient;
     } else if (idx < 0.66) {
       color += 0.001 / d * transient;
-      color.r += 0.001 / d * bass;
+      color.r += 0.002 / d * bass;
     } else {
       color += 0.001 / d * mid;
-      color.g += 0.001 / d * bass;
+      color.g += 0.002 / d * bass;
     }
   }
-
+  color *= 0.5;
   // Add a radial gradient to the color
   color += 0.01 / length(uv) * bass;
 
