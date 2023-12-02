@@ -165,10 +165,6 @@ function ready() {
     fftTransientLocation = gl.getUniformLocation(program, "u_fftTransient");
     fftHighMidLocation = gl.getUniformLocation(program, "u_fftHighMid");
 
-    
-
-    loadShaders(ready);
-    
     function initAudioOnUserAction() {
       // Remove the event listener after the first user action to avoid multiple initializations
       document.removeEventListener("click", initAudioOnUserAction);

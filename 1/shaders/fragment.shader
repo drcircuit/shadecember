@@ -1,5 +1,5 @@
 #ifdef GL_ES
-precision mediump float;
+precision highp float;
 #endif
 uniform vec2 u_resolution;
 uniform sampler2D u_fftTexture;
@@ -41,7 +41,7 @@ void main(){
   transient *= 5.0;
 
   for(float i = 0.0;i<50.0;i+=1.0){
-    uv *= 1.02;    
+    uv *= 1.04;    
     uv = Rot2d(sin(t*.02) * i) * uv;
     float r = 0.5 + 0.5 * sin(0.1 * i + t);
     r /= 2.0;
