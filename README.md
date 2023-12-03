@@ -26,4 +26,4 @@ To run and explore the shaders, follow these steps:
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/24-shaders-until-christmas.git
+   git clone https://github.com/drcircuit/shadecember.git
