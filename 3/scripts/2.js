@@ -81,7 +81,7 @@ function initWebAudio() {
         if(!playing)
         {
             source.buffer = buffer;
-            source.loopEnd = 31.0;
+            source.loopEnd = 56.0;
             source.loop = true;
             source.connect(analyser);
             analyser.connect(audioContext.destination);
