@@ -5,7 +5,7 @@
 
 ## Overview
 
-Welcome to the "24 Shaders Until Christmas" repository! This project consists of a series of WebGL fragment shaders written using the GLSL language. Each day leading up to Christmas, a new shader is added to create a visually stunning advent calendar of shader art. The shaders are implemented with the help of the DrCiRCUiTs Canvas Library, providing a framework for WebGL development.
+Welcome to the "24 Shaders Until Christmas" repository! This project consists of a series of WebGL fragment shaders written using the GLSL language. Each day leading up to Christmas, a new shader is added to create a visually stunning advent calendar of shader art. The shaders are implemented with the help of the DrCiRCUiTs Canvas Library, providing a framework for web graphcis development.
 
 ## License
 
