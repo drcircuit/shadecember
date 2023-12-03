@@ -58,7 +58,6 @@ function mousemove(e) {
 }
 
 let audioStarted = false;
-initAudioOnUserAction();
 function initAudioOnUserAction() {
   document.removeEventListener("click", initAudioOnUserAction);
   document.removeEventListener("touchstart", initAudioOnUserAction);
