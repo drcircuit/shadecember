@@ -79,6 +79,6 @@ void main() {
   vec2 uv = (2.0*gl_FragCoord.xy - u_resolution.xy)/u_resolution.y;
   uv *= Rot2d(treble*0.1+t);
   vec3 col = Julia(uv*2.0, t);
-  col.b *= .4 + bass * 0.5;
+  col.r *= .4 + bass * 0.5;
   gl_FragColor = vec4(col, 1.0);
 }
