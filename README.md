@@ -14,9 +14,6 @@ This project is open-source and released under the [GNU General Public License (
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Gallery](#gallery)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Getting Started
