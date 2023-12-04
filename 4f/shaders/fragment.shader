@@ -1,5 +1,5 @@
 #ifdef GL_ES
-  precision highp float;
+  precision lowp float;
 #endif
 
 // Uniform variables for resolution, FFT texture, mouse position, and time
@@ -113,36 +113,79 @@ void main() {
   vec3 offset2 = vec3(-2.0 * sin(0.0), 1.0 * cos(0.0), 10.0 * sin(0.0));
   
   // Iterate over particles for the first component
-  for(float i = 0.0; i < 1000.0; i++) {
+  for(float i = 0.0; i < 100.0; i++) {
     attractorPosition = lorenzAttractor(attractorPosition, deltaTime + time * 0.00001);
     float distance = 2.0 / (0.1 + distanceToCameraRay(ray, attractorPosition + offset2));
     accumulatedColor += vec3(distance);
+    attractorPosition = lorenzAttractor(attractorPosition, deltaTime + time * 0.00001);
+    distance = 1.0 / (0.1 + distanceToCameraRay(ray, attractorPosition + offset2));
+    accumulatedColor += vec3(distance);
+    attractorPosition = lorenzAttractor(attractorPosition, deltaTime + time * 0.00001);
+    distance = .2 / (0.1 + distanceToCameraRay(ray, attractorPosition + offset2));
+    accumulatedColor += vec3(distance);
+    attractorPosition = lorenzAttractor(attractorPosition, deltaTime + time * 0.00001+time*0.001);
+    distance = 1.0 / (0.1 + distanceToCameraRay(ray, attractorPosition + offset2));
+    accumulatedColor += vec3(distance*distance);
+
+attractorPosition = lorenzAttractor(attractorPosition, deltaTime + time * 0.00001);
+    distance = 2.0 / (0.1 + distanceToCameraRay(ray, attractorPosition + offset2));
+    accumulatedColor += vec3(distance);
+
+
   }
   
   vec3 offset = vec3(-3.0 * sin(mid), 5.0 * cos(treble), -4.0 * sin(bass));
   vec3 attractorPosition2 = vec3(0.1, -1.1, 0.1);
   accumulatedColor *= accumulatedColor/250.0;
   // Iterate over particles for the second component
-  for(float i = 0.0; i < 1000.0; i++) {
+  for(float i = 0.0; i < 100.0; i++) {
     attractorPosition2 = lorenzAttractor(attractorPosition2, deltaTime + time * 0.000011);
     float distance = 1.5 / (distanceToCameraRay(ray, attractorPosition2 + offset * 0.5));
-    accumulatedColor.b += distance * 2.0;
+    accumulatedColor.b += distance * 1.0;
+    accumulatedColor.g += distance * 0.5;
+    attractorPosition2 = lorenzAttractor(attractorPosition2, deltaTime + time * 0.000011+time*0.002);
+    distance = 1.2 / (distanceToCameraRay(ray, attractorPosition2 + offset * 0.5));
+    accumulatedColor.b += distance * 1.0;
+    accumulatedColor.g += distance * 0.5;
+    attractorPosition2 = lorenzAttractor(attractorPosition2, deltaTime + time * 0.000011+time*0.001);
+    distance = 1.2 / (distanceToCameraRay(ray, attractorPosition2 + offset * 0.5));
+    accumulatedColor.b += distance * 1.0;
     accumulatedColor.g += distance * 0.5;
   }
 
   vec3 offset3 = vec3(2.0 * sin(mid), -1.0 * cos(bass), -4.0 * sin(treble));
   vec3 attractorPosition3 = vec3(0.1, -1.1, 0.1);
   // Iterate over particles for the third component
-  for(float i = 0.0; i < 500.0; i++) {
+  for(float i = 0.0; i < 25.0; i++) {
     attractorPosition3 = lorenzAttractor(attractorPosition3, 0.1 * deltaTime + (sin(time) * 0.5 + 0.5) * 0.0061);
     float distance = 1.5 / (distanceToCameraRay(ray, attractorPosition3 + offset3 * 0.2));
+    accumulatedColor.r += distance;
+    accumulatedColor.b += 0.6 * distance;
+    accumulatedColor.b += 0.2 * (cos(distance) * 0.5 + 0.5);
+    attractorPosition3 = lorenzAttractor(attractorPosition3, 0.3 * deltaTime + (sin(time) * 0.5 + 0.5) * 0.02);
+    distance = 1.5 / (distanceToCameraRay(ray, attractorPosition3 + offset3 * 0.2));
+    accumulatedColor.r += distance;
+    accumulatedColor.b += 0.6 * distance;
+    accumulatedColor.b += 0.2 * (cos(distance) * 0.5 + 0.5);
+    attractorPosition3 = lorenzAttractor(attractorPosition3, .2 * deltaTime + (sin(time) * 0.5 + 0.5) * 0.022);
+    distance = 1.5 / (distanceToCameraRay(ray, attractorPosition3 + offset3 * 0.2));
+    accumulatedColor.r += distance;
+    accumulatedColor.b += 0.6 * distance;
+    accumulatedColor.b += 0.2 * (cos(distance) * 0.5 + 0.5);
+    attractorPosition3 = lorenzAttractor(attractorPosition3, .4 * deltaTime + (sin(time) * 0.5 + 0.5) * 0.024);
+    distance = .5 / (distanceToCameraRay(ray, attractorPosition3 + offset3 * 0.2));
+    accumulatedColor.r += distance;
+    accumulatedColor.b += 0.6 * distance;
+    accumulatedColor.b += 0.2 * (cos(distance) * 0.5 + 0.5);
+    attractorPosition3 = lorenzAttractor(attractorPosition3, .6 * deltaTime + (sin(time) * 0.5 + 0.5) * 0.01);
+    distance = .5 / (distanceToCameraRay(ray, attractorPosition3 + offset3 * 0.2));
     accumulatedColor.r += distance;
     accumulatedColor.b += 0.6 * distance;
     accumulatedColor.b += 0.2 * (cos(distance) * 0.5 + 0.5);
   }
 
   // Normalize the accumulated color
-  accumulatedColor /= 750.0 ;  
+  accumulatedColor /= 75.0 ;  
   accumulatedColor *= 1.0 - length(uv) * 0.4;
   // Set the final fragment color
   gl_FragColor = vec4(accumulatedColor, 1.0);
