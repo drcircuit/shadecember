@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../dcl.js"></script>
+    <title>Spinning Cube Example with background color clearing</title>
+</head>
+<body>
+<script>
+    var scr = dcl.setupScreen(window.innerWidth, window.innerHeight);
+    scr.setBgColor("black");
+    var angle = 0;
+    let pal = dcl.palette.fire;
+    let pal2 = dcl.palette.rainbow;
+    let pal2Max = pal2.length-2;
+    let pal2Min = 0;
+    let pal2Idx = 1;
+    let pal2Dir = 1;
+    let palMax = pal.length-2;
+    let palMin = 0;
+    let palDir = 1;
+    let palIdx = 0;
+    var cube = {
+        vertices: [
+            dcl.vector(-1, 1, -1),
+            dcl.vector(1, 1, -1),
+            dcl.vector(1, -1, -1),
+            dcl.vector(-1, -1, -1),
+            dcl.vector(-1, 1, 1),
+            dcl.vector(1, 1, 1),
+            dcl.vector(1, -1, 1),
+            dcl.vector(-1, -1, 1)
+        ],
+        faces: [
+            [0, 1, 2, 3],
+            [1, 5, 6, 2],
+            [5, 4, 7, 6],
+            [4, 0, 3, 7],
+            [0, 4, 5, 1],
+            [3, 2, 6, 7]
+        ],
+        transformedVertices: []
+    };
+
+    function draw() {
+        dcl.clear(pal[palIdx]);
+        palIdx = palIdx + palDir;
+        if(palIdx > palMax || palIdx < palMin){
+            palDir = -palDir;
+        }
+        console.log(palIdx);
+        cube.vertices.forEach(function (v, i) {
+            cube.transformedVertices[i] = v.rotateY(angle).project(scr.width, scr.height, scr.height / 2, 3.5);
+        });
+        cube.faces.forEach(function (f) {
+            var a = cube.transformedVertices[f[0]];
+            dcl.curve.start(a.x, a.y);
+            f.forEach(function (v, i, arr) {
+                var p = cube.transformedVertices[v];
+                if (i === 0) {
+                    dcl.curve.start(p.x, p.y);
+                }
+                dcl.curve.vertex(p.x, p.y);
+                if (i === arr.length - 1) {
+                    dcl.curve.stroke(pal2[pal2Idx], 2);
+                    dcl.curve.end();
+                }
+            });
+        });
+        pal2Idx = pal2Idx + pal2Dir;
+        if(pal2Idx > pal2Max || pal2Idx < pal2Min){
+            pal2Dir = -pal2Dir;
+        }
+        angle += 1;
+    }
+
+    dcl.clearEachFrame = false;
+    dcl.animate();
+</script>
+</body>
+</html>
