@@ -402,7 +402,6 @@ let running = false;
 document.addEventListener('click', () => {
     if (!running) {
         setup();
-        audioContext.resume();
         running = true;
     }
 });
@@ -410,7 +409,6 @@ document.addEventListener('click', () => {
 document.addEventListener('touchstart', () => {
     if (!running) {
         setup();
-        audioContext.resume();
         running = true;
     }
 });
