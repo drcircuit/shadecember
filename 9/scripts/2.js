@@ -253,15 +253,16 @@ let textureLocationPost;
 let fftTextureLocationPost;
 let resolutionLocationPost;
 let music;
+let halVoice;
 let mouse = [0, 0];
 let analyser;
 let gain;
 const WIDTH = 1024;
 const HEIGHT = 1024;
 
-async function setupMP3Audio() {
-    const buffer = await loadMP3('./scember1.mp3');
-    const loopPoint = [0, 20.5];
+async function setupMP3Audio(url) {
+    const buffer = await loadMP3(url);
+    const loopPoint = [0, 58.5];
     const source = setupAudioContextSource(buffer, loopPoint);
     const analyser = setupAudioContextAnalyser();
     const gain = setupAudioContextGain();
@@ -293,7 +294,9 @@ async function setup() {
     fftTextureLocation = gl.getUniformLocation(program, 'u_fftTexture');
     fftTextureLocationPost = gl.getUniformLocation(postProcessingProgram, 'u_fftTexture');
     audioContext = setupAudioContext();
-    [analyser, gain, music] = await setupMP3Audio();
+    [analyser, gain, music] = await setupMP3Audio('./scember1.mp3');
+    [analyser, _, halVoice] = await setupMP3Audio('./scember2.mp3');
+    halVoice.start();
     music.start();
     loop(0);
 }
@@ -399,6 +402,7 @@ let running = false;
 document.addEventListener('click', () => {
     if (!running) {
         setup();
+        audioContext.resume();
         running = true;
     }
 });
@@ -406,6 +410,7 @@ document.addEventListener('click', () => {
 document.addEventListener('touchstart', () => {
     if (!running) {
         setup();
+        audioContext.resume();
         running = true;
     }
 });
