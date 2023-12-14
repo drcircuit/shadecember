@@ -158,7 +158,8 @@ async function addCubeMapToProgram(program, urls, texUnit, uniformName) {
 function setupFramebuffer(width, height) {
     const framebuffer = createFramebuffer(gl, width, height);
     const renderbuffer = createRenderbuffer(gl, width, height);
-    return [framebuffer, renderbuffer];
+    const copyBuffer = createFramebuffer(gl, width, height);
+    return [framebuffer, renderbuffer, copyBuffer];
 }
 
 function setupCanvas(width, height) {
@@ -243,10 +244,12 @@ let mouseLocation;
 let textureLocation;
 let framebuffer;
 let renderbuffer;
+let copyBuffer;
 let canvas;
 let audioContext;
 let fftTextureLocation;
 let fftTexture;
+let copyTexture;
 let timeLocationPost;
 let mouseLocationPost;
 let textureLocationPost;
@@ -262,7 +265,7 @@ const HEIGHT = 1024;
 
 async function setupMP3Audio(url) {
     const buffer = await loadMP3(url);
-    const loopPoint = [0, 58.5];
+    const loopPoint = [0, 42.666];
     const source = setupAudioContextSource(buffer, loopPoint);
     const analyser = setupAudioContextAnalyser();
     const gain = setupAudioContextGain();
@@ -288,15 +291,13 @@ async function setup() {
         './cubemaps/hal9000env/nz.png'
     ];
     await addCubeMapToProgram(postProcessingProgram, cubemapUrls, 2, 'u_env');
-    [framebuffer, renderbuffer] = setupFramebuffer(WIDTH, HEIGHT);
+    [framebuffer, renderbuffer, copyBuffer] = setupFramebuffer(WIDTH, HEIGHT);
     createRenderQuad(gl);
     setupMouse(canvas);
     fftTextureLocation = gl.getUniformLocation(program, 'u_fftTexture');
     fftTextureLocationPost = gl.getUniformLocation(postProcessingProgram, 'u_fftTexture');
     audioContext = setupAudioContext();
     [analyser, gain, music] = await setupMP3Audio('./scember1.mp3');
-    [analyser, _, halVoice] = await setupMP3Audio('./scember2.mp3');
-    halVoice.start();
     music.start();
     loop(0);
 }
@@ -337,9 +338,18 @@ function render(time) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
     gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
+    if(!copyTexture)
+        copyTexture = gl.createTexture();
     // Use program and draw scene
     gl.useProgram(program);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, copyTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, WIDTH, HEIGHT, 0);
+    gl.uniform1i(textureLocation, 0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
     gl.activeTexture(gl.TEXTURE1); // Activate texture unit for FFT texture
     gl.bindTexture(gl.TEXTURE_2D, fftTexture);
     gl.uniform1i(fftTextureLocation, 1); // Tell the shader to use texture unit 1 for FFT
@@ -366,7 +376,8 @@ function updateFFTTexture() {
 
 }
 function buildFFTTexture() {
-    fftTexture = gl.createTexture();
+    if(!fftTexture)
+        fftTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, fftTexture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, analyser.frequencyBinCount, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -378,7 +389,7 @@ function buildFFTTexture() {
     gl.uniform1i(fftTextureLocation, 0);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, fftTexture);
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);   
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(dataArray);
     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, dataArray.length, 1, gl.LUMINANCE, gl.UNSIGNED_BYTE, dataArray);
     gl.useProgram(postProcessingProgram);
