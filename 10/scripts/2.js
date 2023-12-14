@@ -249,6 +249,7 @@ let canvas;
 let audioContext;
 let fftTextureLocation;
 let fftTexture;
+let copyTexture;
 let timeLocationPost;
 let mouseLocationPost;
 let textureLocationPost;
@@ -340,7 +341,8 @@ function render(time) {
 
     // Use program and draw scene
     gl.useProgram(program);
-    let copyTexture = gl.createTexture();
+    if(!copyTexture)
+        copyTexture = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, copyTexture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -375,7 +377,8 @@ function updateFFTTexture() {
 
 }
 function buildFFTTexture() {
-    fftTexture = gl.createTexture();
+    if (!fftTexture)
+        fftTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, fftTexture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, analyser.frequencyBinCount, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
