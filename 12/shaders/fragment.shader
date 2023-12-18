@@ -98,7 +98,7 @@ float map(vec3 p, float s) {
         p *= k;
         scale *= k;
     }
-
+    p *= 0.75f;
     return 0.25f * abs(1.f - p.z * p.y * p.x) / scale;
 }
 

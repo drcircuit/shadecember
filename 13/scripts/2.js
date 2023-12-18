@@ -265,7 +265,7 @@ const HEIGHT = 1024;
 
 async function setupMP3Audio(url) {
     const buffer = await loadMP3(url);
-    const loopPoint = [0, 78.00];
+    const loopPoint = [0, 42.666];
     const source = setupAudioContextSource(buffer, loopPoint);
     const analyser = setupAudioContextAnalyser();
     const gain = setupAudioContextGain();
